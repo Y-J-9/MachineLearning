@@ -36,8 +36,8 @@ class LUTriangle:
             self.b[r], self.b[loc] = self.b[loc], self.b[r]
             self.L[[r, loc]] = self.L[[loc, r]]
 
-            print(self.L)
-            print(self.U)
+            #print(self.L)
+            #print(self.U)
             self.L[r][r] = 1
             '''
             self.L[r][0] = self.A[r][0] / self.A[0][0]
@@ -61,7 +61,7 @@ class LUTriangle:
         x[-1] = y[-1] / self.U[-1][-1]
         for i in range(len(self.A) - 2, -1, -1):
             x[i] = (y[i] - self.XSum_help(i, len(self.A), x)) / self.U[i][i]
-        print(x)
+        return x
 
     def XSum_help(self, i, n, x):
         sum = 0
