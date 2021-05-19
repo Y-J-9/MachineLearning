@@ -40,9 +40,11 @@ def getFrame(path, encoding):
 frame = getFrame("D:\\Python\\Code\\EditingData\\MachineLearning\\DT_Model\\决策树\\watermelon.txt", "gbk")
 train = getFrame("D:\\Python\\Code\\EditingData\\MachineLearning\\DT_Model\\决策树\\Train_set.txt", "utf-8")
 test = getFrame("D:\\Python\\Code\\EditingData\\MachineLearning\\DT_Model\\决策树\\Validation_set.txt", "utf-8")
-print(frame)
-cart = CART(frame,train=train,test=test, col=" 好瓜")
-cart.showFrontCART()
-cart.showCART()
+print(train)
+cart = CART(frame,train=train,test=test,col=" 好瓜")
+
+#cart.showCART()
+#cart.showFrontCART()
+#cart.showAfterCART()
 #for each in range(0, len(frame)):
     #print(cart.check(frame.iloc[each]))
