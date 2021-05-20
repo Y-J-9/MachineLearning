@@ -37,37 +37,40 @@ class Forest:
             plt.plot([lines["x"][each], lines["x"][each]], [0, 1], c="black", linewidth=0.1)
         for each in range(0, len(lines["y"])):
             plt.plot([0, 1], [lines["y"][each], lines["y"][each]], c="black", linewidth=0.1)
-        #xmean = np.mean(lines["x"])
-        dic = {}
-        for each in lines["x"]:
-            if each in dic.keys():
-                dic[each] += 1
-            else:
-                dic[each] = 1
-        xmean = 0
-        max = 0
-        for each in dic.keys():
-            if dic[each] > max:
-                xmean = each
-                max = dic[each]
-        dic = {}
-        for each in lines["y"]:
-            if each in dic.keys():
-                dic[each] += 1
-            else:
-                dic[each] = 1
-        ymean = 0
-        max = 0
-        for each in dic.keys():
-            if dic[each] > max:
-                ymean = each
-                max = dic[each]
+        xmean = self.getMode(self.getDic(lines["x"]))
+        ymean = self.getMode(self.getDic(lines["y"]))
         plt.plot([xmean,xmean],[ymean,1],c="r",linewidth=3)
         plt.plot([xmean,1],[ymean,ymean],c="r",linewidth=3)
         plt.title("随机森林的分类结果图")
         plt.xlabel(att[0])
         plt.ylabel(att[1])
         plt.show()
+
+    '''
+    工具函数，根据给出的字典{value:nums}找出出现次数(nums)最多的值(value)
+    @:param dic 字典
+    '''
+    def getMode(self, dic):
+        xmean = 0
+        max = 0
+        for each in dic.keys():
+            if dic[each] > max:
+                xmean = each
+                max = dic[each]
+        return xmean
+
+    '''
+    工具函数，根据给出的列表获取其出现次数字典
+    @:param list 列表
+    '''
+    def getDic(self, lines):
+        dic = {}
+        for each in lines:
+            if each in dic.keys():
+                dic[each] += 1
+            else:
+                dic[each] = 1
+        return dic
 
     '''
     根据生成的决策树确定分界线
