@@ -25,26 +25,37 @@ class Forest:
         plt.rcParams['font.sans-serif'] = ['KaiTi']  # 指定默认字体
         plt.rcParams['axes.unicode_minus'] = False  # 解决保存图像是负号'-'显示为方块的问题
         plt.scatter(x=bFrame[att[0]],y=bFrame[att[1]],marker="+",s=100)
-        plt.scatter(x=sFrame[att[0]],y=sFrame[att[1]],marker="*",s=100)
-        lines = {}
-        lines["x"] = []
-        lines["y"] = []
-        for each in self.set:
-            #统计每颗树的预测结果
-            self.generateLine(each, lines, att[0], att[1])
-        # 绘图
-        for each in range(0, len(lines["x"])):
-            plt.plot([lines["x"][each], lines["x"][each]], [0, 1], c="black", linewidth=0.1)
-        for each in range(0, len(lines["y"])):
-            plt.plot([0, 1], [lines["y"][each], lines["y"][each]], c="black", linewidth=0.1)
-        xmean = self.getMode(self.getDic(lines["x"]))
-        ymean = self.getMode(self.getDic(lines["y"]))
-        plt.plot([xmean,xmean],[ymean,1],c="r",linewidth=3)
-        plt.plot([xmean,1],[ymean,ymean],c="r",linewidth=3)
+        plt.scatter(x=sFrame[att[0]],y=sFrame[att[1]],marker="*",s=100) #散点图
+        self.plot_decision_boundary() #分类图
         plt.title("随机森林的分类结果图")
         plt.xlabel(att[0])
         plt.ylabel(att[1])
+        plt.savefig("随机森林的分类结果图.png")
         plt.show()
+
+    '''
+    绘制决策边界的函数
+    '''
+    def plot_decision_boundary(self):
+        X = self.frame["密度"]
+        Y = self.frame["含糖率"]
+        # 设定最大最小值，附加一点点边缘填充
+        x_min, x_max = min(X) - 0.1, max(X) + 0.1
+        y_min, y_max = min(Y) - 0.1, max(Y) + 0.1
+        h = 0.005
+        # 图像上的点集
+        xx, yy = np.arange(x_min, x_max, h), np.arange(y_min, y_max, h)
+        for i in range(0, len(yy)):
+            tem = self.predict(obj={"密度": xx[0], "含糖率": yy[i]})
+            startx = 0
+            for j in range(1, len(xx)):
+                temp = self.predict(obj={"密度": xx[j], "含糖率": yy[i]})
+                if temp != tem:
+                    plt.plot([xx[startx], xx[j]], [yy[i], yy[i]], c="g" if tem >= 0 else "r", linewidth=1)
+                    tem = temp
+                    startx = j
+                if j == len(xx) - 1:
+                    plt.plot([xx[startx], xx[j]], [yy[i], yy[i]], c="g" if tem >= 0  else "r", linewidth=1)
 
     '''
     工具函数，根据给出的字典{value:nums}找出出现次数(nums)最多的值(value)
@@ -73,19 +84,18 @@ class Forest:
         return dic
 
     '''
-    根据生成的决策树确定分界线
+    绘制每棵树的预测结果
     '''
     def generateLine(self, root, lines, xName, yName):
         if str(type(root)) != "<class 'MachineLearning.DT_Model.CART.LeafNode'>":
             if root.name == xName:
                 lines["x"].append(root.value)
-                self.generateLine(root.lchild,lines,xName,yName)
-                self.generateLine(root.rchild,lines,xName,yName)
+                self.generateLine(root.lchild, lines, xName, yName)
+                self.generateLine(root.rchild, lines, xName, yName)
             else:
                 lines["y"].append(root.value)
                 self.generateLine(root.lchild, lines, xName, yName)
                 self.generateLine(root.rchild, lines, xName, yName)
-
     '''
     生成森林
     '''
@@ -148,11 +158,17 @@ class Forest:
     根据所给表格生成一棵树的算法
     '''
     def generateTree(self, table):
-        # 否则计算最优划分属性
+        # 计算最优划分属性
         list = self.bestAttri(table)
         # 如果是叶子结点，那么直接生成并返回
         if self.cart.isLeafNode(table):
             return LeafNode(table.iloc[0][self.col])
+
+        # 如果根据最优划分属性无法继续划分了
+        if self.cart.canNotDevide(table, list):
+            for i in range(0, len(table)):
+                if table.iloc[i][list[1]] == list[0]:
+                    return LeafNode(table.iloc[i][self.col])
 
         left = table.loc[table[list[1]] >= list[0]]
         right = table.loc[table[list[1]] < list[0]]

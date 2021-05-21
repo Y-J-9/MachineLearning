@@ -59,6 +59,7 @@ class CART:
         plt.title("完全CART树")
         root = self.cartTree(self.train)
         self.travelCart(root, window, 0.5, 0.9, 0.4)
+        plt.savefig("未剪枝CART树")
         plt.show()
 
     '''
@@ -73,6 +74,7 @@ class CART:
         plt.title("CART预剪枝树")
         root = self.cartFrontTree(self.train)
         self.travelCart(root, window, 0.5, 0.9, 0.4)
+        plt.savefig("CART预剪枝树")
         plt.show()
 
     '''
@@ -88,6 +90,7 @@ class CART:
         root = self.cartTree(self.train)
         self.afterCutCART(root)
         self.travelCart(root, window, 0.5, 0.9, 0.4)
+        plt.savefig("CART后剪枝树")
         plt.show()
 
     '''

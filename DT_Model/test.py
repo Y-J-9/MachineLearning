@@ -43,8 +43,8 @@ test = getFrame("D:\\Python\\Code\\EditingData\\MachineLearning\\DT_Model\\决�
 print(train)
 cart = CART(frame,train=train,test=test,col=" 好瓜")
 
-#cart.showCART()
-#cart.showFrontCART()
-#cart.showAfterCART()
+cart.showCART()
+cart.showFrontCART()
+cart.showAfterCART()
 #for each in range(0, len(frame)):
     #print(cart.check(frame.iloc[each]))
